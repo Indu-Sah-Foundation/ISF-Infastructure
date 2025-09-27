@@ -6,7 +6,7 @@ variable "location" {
 
 }
 
-variable "isf_foundation" {
+variable "app_name" {
 
 }
 
