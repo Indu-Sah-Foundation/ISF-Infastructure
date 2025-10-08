@@ -1,84 +1,75 @@
 name: Automated Deployments
 
-on: 
-    pull_request:
-        paths:
-            - '**/*.tf'
-            - 'env.tfvars'
-    push:
-        branches: [main]
-        paths:
-            - '**/*tf'
-            - 'env.tfvars'
-            
-permissions: 
-    contents: read
+on:
+  pull_request:
+    paths:
+      - '**/*.tf'
+      - 'env.tfvars'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.tf'
+      - 'env.tfvars'
+
+permissions:
+  contents: read
+
 jobs:
-    plan:
-        runs-on: ubuntu-latest
-        name: Terraform Plan
-        steps:
-            - uses: actions/checkout@v4
-            - name: Setup Terraform
-              uses: hashicorp/setup-terraform@v2
-              with: 
-                terraform_version: '1.5.6'
+  plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-            - name: Azure login
-              uses: azure/login@v1
-              with:
-                creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.6'
 
-            - name: Terraform Init
-              uses: terraform init
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-            - name: Terraform Validate
-              uses: terraform validate
-            
-            - name: Terraform Plan
-              uses: terrfrom plan -var-file="env.tfvars" -out=tfplan
-            
-            - name: Terraform Apply
-              uses: terraform apply tfplan
-            
-            - name: Upload tfplan
-              uses: actions/upload-artifact@v4
-              with:
-                name: tfplan
-                path: tfplan
-            
-    apply:
-        needs: plan
-        runs-on: ubuntu-latest
-        if: github.ref == 'refs/heads/main'
-        name: Terraform apply (main)
-        steps:
-            - uses: actions/checkout@v4
-            - name: Setup Terraform
-              uses: hashicorp/setup-terraform@v2
-              with:
-                terraform_version: '1.5.6'
+      - name: Terraform Init
+        run: terraform init -input=false
 
-            - name: Azure Login
-              uses: azure/login@v1
-              with: 
-                terraform_version: '1.5.6'
+      - name: Terraform Validate
+        run: terraform validate
 
-            - name: Azure Login
-              uses: azure/login@v4
-              with:
-                creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Terraform Plan
+        run: terraform plan -var-file="env.tfvars" -out=tfplan
 
-            - name: Download tfplan
-              uses: actions/download-artifact@v4
-              with:
-                name: tfplan
-                path: .
-            
-            - name: Terraform Apply
-              run: terraform apply -auto-approve tfplan
+      - name: Upload tfplan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: tfplan
 
-            
+  apply:
+    name: Terraform Apply
+    needs: plan
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.6'
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Download tfplan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan
+          path: .
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
