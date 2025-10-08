@@ -1,3 +1,3 @@
 output "webapp_url" {
-    value = "https://${azurerm_linux_web_app.app.default_hostname}"
+    value = { for k, v in azurerm_linux_web_app.app: k => "https://${v.name}.azurewebsites.net"}
 }
