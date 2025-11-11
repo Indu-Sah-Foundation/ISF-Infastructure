@@ -35,10 +35,7 @@ resource "azurerm_linux_web_app" "backend" {
       go_version = "1.21"
     }
     cors {
-      allowed_origins = [
-        "https://${azurerm_static_site.frontend.default_host_name}"
-      ]
-      support_credentials = true
+      allowed_origins = ["*"]
     }
   }
 
@@ -54,8 +51,10 @@ resource "azurerm_static_site" "frontend" {
   location            = var.location
   sku_tier            = "Free"
   sku_size            = "Free"
+}
 
-  app_settings = {
-    "REACT_APP_API_URL" = "https://${azurerm_linux_web_app.backend.default_hostname}"
-  }
+resource "azurerm_static_site_custom_domain" "frontend_env" {
+  static_site_id  = azurerm_static_site.frontend.id
+  domain_name     = azurerm_static_site.frontend.default_host_name
+  validation_type = "cname-delegation"
 }

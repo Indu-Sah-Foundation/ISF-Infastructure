@@ -8,6 +8,11 @@ output "backend_url" {
   description = "Go API URL"
 }
 
+output "backend_api_url_for_react" {
+  value       = "https://${azurerm_linux_web_app.backend.default_hostname}"
+  description = "Use this URL in your React app as REACT_APP_API_URL"
+}
+
 output "static_web_app_name" {
   value       = azurerm_static_site.frontend.name
   description = "For deployment token"
