@@ -1,75 +1,37 @@
-name: Automated Deployments
+name: Terraform Apply
 
 on:
-  pull_request:
-    paths:
-      - '**/*.tf'
-      - 'env.tfvars'
-  push:
-    branches:
-      - main
-    paths:
-      - '**/*.tf'
-      - 'env.tfvars'
-
-permissions:
-  contents: read
+  repository_dispatch:
+    types: [run-terraform]
+  workflow_dispatch:
 
 jobs:
-  plan:
-    name: Terraform Plan
+  terraform:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: '1.5.6'
+        uses: hashicorp/setup-terraform@v3
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Init
-        run: terraform init -input=false
-
-      - name: Terraform Validate
-        run: terraform validate
+        run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -var-file="env.tfvars" -out=tfplan
-
-      - name: Upload tfplan
-        uses: actions/upload-artifact@v4
-        with:
-          name: tfplan
-          path: tfplan
-
-  apply:
-    name: Terraform Apply
-    needs: plan
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: '1.5.6'
-
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Download tfplan
-        uses: actions/download-artifact@v4
-        with:
-          name: tfplan
-          path: .
+        run: terraform plan -out=plan.tfplan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+        run: terraform apply -auto-approve plan.tfplan
