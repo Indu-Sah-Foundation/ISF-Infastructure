@@ -31,8 +31,33 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Setup Terraform State Storage
+        run: |
+          # Create resource group for state if it doesn't exist
+          az group create --name terraform-state-rg --location eastus2 || true
+
+          # Create storage account if it doesn't exist
+          az storage account create \
+            --name isfterraformstate \
+            --resource-group terraform-state-rg \
+            --location eastus2 \
+            --sku Standard_LRS \
+            --encryption-services blob || true
+
+          # Create container if it doesn't exist
+          az storage container create \
+            --name tfstate \
+            --account-name isfterraformstate || true
+
       - name: Terraform Init
         run: terraform init
+
+      - name: Import Existing Resources
+        continue-on-error: true
+        run: |
+          terraform import -var-file="env.tfvars" azurerm_resource_group.rg /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/isfinfa-rg || true
+          terraform import -var-file="env.tfvars" azurerm_service_plan.asp /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/isfinfa-rg/providers/Microsoft.Web/serverFarms/isfinfa-plan || true
+          terraform import -var-file="env.tfvars" azurerm_linux_web_app.backend /subscriptions/${{ secrets.AZURE_SUBSCRIPTION_ID }}/resourceGroups/isfinfa-rg/providers/Microsoft.Web/sites/isfinfa-go-backend || true
 
       - name: Terraform Validate
         run: terraform validate
