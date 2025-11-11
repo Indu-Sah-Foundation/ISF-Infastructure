@@ -32,12 +32,19 @@ resource "azurerm_linux_web_app" "backend" {
 
   site_config {
     application_stack {
-      go_version = "1.19"
+      go_version = "1.21"
+    }
+    cors {
+      allowed_origins = [
+        "https://${azurerm_static_site.frontend.default_host_name}"
+      ]
+      support_credentials = true
     }
   }
 
   app_settings = {
     "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
+    "WEBSITES_PORT"                  = "8080"
   }
 }
 
@@ -46,5 +53,9 @@ resource "azurerm_static_site" "frontend" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
   sku_tier            = "Free"
-  sku_size = "Free"
+  sku_size            = "Free"
+
+  app_settings = {
+    "REACT_APP_API_URL" = "https://${azurerm_linux_web_app.backend.default_hostname}"
+  }
 }
