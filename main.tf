@@ -5,6 +5,12 @@ terraform {
       version = "~> 3.0"
     }
   }
+  backend "azurerm" {
+    resource_group_name  = "terraform-state-rg"
+    storage_account_name = "isfterraformstate"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 }
 
 provider "azurerm" {
@@ -48,7 +54,7 @@ resource "azurerm_linux_web_app" "backend" {
 resource "azurerm_static_web_app" "frontend" {
   name                = "${var.app_name}-react-frontend"
   resource_group_name = azurerm_resource_group.rg.name
-  location            = var.location
+  location            = "eastus2"
   sku_tier            = "Free"
   sku_size            = "Free"
 }
