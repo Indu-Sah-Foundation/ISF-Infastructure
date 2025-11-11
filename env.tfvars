@@ -1,3 +1,3 @@
-app_name="isfinfa"
-location="eastus2"
+app_name = "isfinfa"
+location = "eastus"
 
