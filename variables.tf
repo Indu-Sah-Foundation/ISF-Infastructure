@@ -6,6 +6,6 @@ variable "location" {
 
 variable "app_name" {
   description = "Base name for apps"
-  default     = "myapp"
+  default     = "isf-backend"
   type        = string
 }
