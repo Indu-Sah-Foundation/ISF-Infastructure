@@ -1,5 +1,5 @@
 output "frontend_url" {
-  value       = "https://${azurerm_static_site.frontend.default_host_name}"
+  value       = "https://${azurerm_static_web_app.frontend.default_host_name}"
   description = "React app URL"
 }
 
@@ -14,8 +14,14 @@ output "backend_api_url_for_react" {
 }
 
 output "static_web_app_name" {
-  value       = azurerm_static_site.frontend.name
+  value       = azurerm_static_web_app.frontend.name
   description = "For deployment token"
+}
+
+output "static_web_app_api_key" {
+  value       = azurerm_static_web_app.frontend.api_key
+  description = "Deployment token for Static Web App"
+  sensitive   = true
 }
 
 output "app_service_name" {
