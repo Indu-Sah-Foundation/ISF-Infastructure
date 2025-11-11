@@ -1,23 +1,28 @@
 name: Terraform Apply
 
 on:
-  repository_dispatch:
-    types: [run-terraform]
+  push:
+    branches: [ main ]
+    paths:
+      - '**/*.tf'
+      - '**/*.tfvars'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write  
-
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
 
       - name: Azure Login via OIDC
         uses: azure/login@v2
@@ -29,9 +34,12 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
+      - name: Terraform Validate
+        run: terraform validate
+
       - name: Terraform Plan
-        run: terraform plan -out=plan.tfplan
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
-        run: terraform apply -auto-approve plan.tfplan
+        if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve tfplan
