@@ -2,10 +2,10 @@ name: Terraform Apply
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
-      - '**/*.tf'
-      - '**/*.tfvars'
+      - "**/*.tf"
+      - "**/*.tfvars"
   workflow_dispatch:
 
 permissions:
@@ -41,5 +41,5 @@ jobs:
         run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve tfplan
