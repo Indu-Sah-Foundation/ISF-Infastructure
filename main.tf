@@ -32,7 +32,7 @@ resource "azurerm_linux_web_app" "backend" {
 
   site_config {
     application_stack {
-      go_version = "1.21"
+      go_version = "1.19"
     }
     cors {
       allowed_origins = ["*"]
@@ -45,16 +45,10 @@ resource "azurerm_linux_web_app" "backend" {
   }
 }
 
-resource "azurerm_static_site" "frontend" {
+resource "azurerm_static_web_app" "frontend" {
   name                = "${var.app_name}-react-frontend"
   resource_group_name = azurerm_resource_group.rg.name
   location            = var.location
   sku_tier            = "Free"
   sku_size            = "Free"
-}
-
-resource "azurerm_static_site_custom_domain" "frontend_env" {
-  static_site_id  = azurerm_static_site.frontend.id
-  domain_name     = azurerm_static_site.frontend.default_host_name
-  validation_type = "cname-delegation"
 }
