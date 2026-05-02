@@ -28,3 +28,13 @@ output "app_service_name" {
   value       = azurerm_linux_web_app.backend.name
   description = "For publish profile"
 }
+
+output "frontdoor_endpoint_url" {
+  value       = "https://${azurerm_cdn_frontdoor_endpoint.main.host_name}"
+  description = "Public Front Door URL – use this as your app's entry point"
+}
+
+output "frontdoor_endpoint_hostname" {
+  value       = azurerm_cdn_frontdoor_endpoint.main.host_name
+  description = "Raw Front Door hostname (for DNS CNAME if adding a custom domain)"
+}
