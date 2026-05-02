@@ -2,27 +2,38 @@
 # WAF Policy
 # ─────────────────────────────────────────────
 resource "azurerm_cdn_frontdoor_firewall_policy" "waf" {
-  name                              = "${replace(var.app_name, "-", "")}waf"
-  resource_group_name               = azurerm_resource_group.rg.name
-  sku_name                          = azurerm_cdn_frontdoor_profile.fd.sku_name
-  enabled                           = true
+  name                = "${replace(var.app_name, "-", "")}waf"
+  resource_group_name = azurerm_resource_group.rg.name
+  sku_name            = azurerm_cdn_frontdoor_profile.fd.sku_name
+  enabled             = true
 
   # Start in Detection so you can review logs before blocking real traffic.
   # Change to "Prevention" once you're satisfied with the rule behaviour.
   mode = "Detection"
 
-  # OWASP managed rule set – covers SQL injection, XSS, RCE, etc.
-  managed_rule {
-    type    = "DefaultRuleSet"
-    version = "1.0"
-    action  = "Block"
-  }
+  # NOTE: managed_rule blocks (OWASP / BotManager) require Premium_AzureFrontDoor.
+  # On Standard we use custom rules instead. Upgrade the SKU below to get
+  # full OWASP managed rule sets.
 
-  # Microsoft Bot Manager – blocks known bad bots
-  managed_rule {
-    type    = "Microsoft_BotManagerRuleSet"
-    version = "1.0"
-    action  = "Block"
+  # Rate-limit rule: block IPs that send more than 1000 requests per minute.
+  custom_rule {
+    name                           = "RateLimitRule"
+    enabled                        = true
+    priority                       = 100
+    rate_limit_duration_in_minutes = 1
+    rate_limit_threshold           = 1000
+    type                           = "RateLimitRule"
+    action                         = "Block"
+
+    match_condition {
+      match_variable = "RemoteAddr"
+      operator       = "IPMatch"
+      # Invert the match so the rule applies to everyone *except* a trusted range.
+      # To restrict to specific IPs instead, set negation_condition = false and
+      # list the IPs you want to block.
+      negation_condition = false
+      match_values       = ["0.0.0.0/0"]
+    }
   }
 
   tags = {
@@ -168,9 +179,9 @@ resource "azurerm_cdn_frontdoor_route" "backend" {
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.backend.id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.backend.id]
 
-  patterns_to_match  = ["/api/*"]
-  supported_protocols = ["Https"]
-  forwarding_protocol = "HttpsOnly"
+  patterns_to_match      = ["/api/*"]
+  supported_protocols    = ["Http", "Https"]
+  forwarding_protocol    = "HttpsOnly"
   https_redirect_enabled = true
 
   # Don't cache API responses
@@ -187,9 +198,9 @@ resource "azurerm_cdn_frontdoor_route" "frontend" {
   cdn_frontdoor_origin_group_id = azurerm_cdn_frontdoor_origin_group.frontend.id
   cdn_frontdoor_origin_ids      = [azurerm_cdn_frontdoor_origin.frontend.id]
 
-  patterns_to_match   = ["/*"]
-  supported_protocols = ["Https"]
-  forwarding_protocol = "HttpsOnly"
+  patterns_to_match      = ["/*"]
+  supported_protocols    = ["Http", "Https"]
+  forwarding_protocol    = "HttpsOnly"
   https_redirect_enabled = true
 
   # Cache static assets at the edge
