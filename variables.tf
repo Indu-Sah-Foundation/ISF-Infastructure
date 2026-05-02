@@ -9,3 +9,20 @@ variable "app_name" {
   default     = "isfapp"
   type        = string
 }
+
+variable "db_admin_username" {
+  description = "PostgreSQL administrator username"
+  type        = string
+  default     = "pgadmin"
+}
+
+variable "db_admin_password" {
+  description = "PostgreSQL administrator password"
+  type        = string
+  sensitive   = true
+}
+
+variable "developer_ip" {
+  description = "Your public IP for DataGrip access – find it at https://ifconfig.me"
+  type        = string
+}

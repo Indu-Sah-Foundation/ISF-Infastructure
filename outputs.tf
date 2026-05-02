@@ -38,3 +38,11 @@ output "frontdoor_endpoint_hostname" {
   value       = azurerm_cdn_frontdoor_endpoint.main.host_name
   description = "Raw Front Door hostname (for DNS CNAME if adding a custom domain)"
 }
+
+output "postgres_server_fqdn" {
+  value = azurerm_postgresql_flexible_server.db.fqdn
+}
+
+output "postgres_database_name" {
+  value = azurerm_postgresql_flexible_server_database.app_db.name
+}
