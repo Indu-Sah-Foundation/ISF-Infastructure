@@ -1,4 +1,5 @@
 app_name          = "isfinfa"
 location          = "eastus"
 db_admin_username = "pgadmin"
-developer_ip      = "YOUR_PUBLIC_IP" 
+developer_ip      = "203.0.113.45"
+ 

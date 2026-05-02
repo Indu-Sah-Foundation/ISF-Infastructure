@@ -12,12 +12,6 @@ permissions:
   contents: read
   id-token: write
 
-# Only allow one Terraform run at a time – cancels any in-progress run
-# when a new push comes in, preventing state lock conflicts.
-concurrency:
-  group: terraform
-  cancel-in-progress: true
-
 jobs:
   setup-backend:
     runs-on: ubuntu-latest
