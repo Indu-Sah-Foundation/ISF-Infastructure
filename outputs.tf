@@ -47,6 +47,11 @@ output "postgres_database_name" {
   value = azurerm_postgresql_flexible_server_database.app_db.name
 }
 
+output "postgres_admin_username" {
+  value       = var.db_admin_username
+  description = "PostgreSQL admin username"
+}
+
 output "translator_endpoint" {
   value = azurerm_cognitive_account.translator.endpoint
   description = "Translator API endpoint"
@@ -84,9 +89,19 @@ output "keyvault_uri" {
   description = "Key Vault URI"
 }
 
+output "keyvault_name" {
+  value       = azurerm_key_vault.kv.name
+  description = "Key Vault name"
+}
+
 output "storage_connection_string" {
   value       = azurerm_storage_account.storage.primary_connection_string
   sensitive   = true
+}
+
+output "storage_account_name" {
+  value       = azurerm_storage_account.storage.name
+  description = "Storage account name"
 }
 
 output "images_url" {
