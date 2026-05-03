@@ -27,7 +27,7 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
 resource "azurerm_postgresql_flexible_server_firewall_rule" "local_dev" {
   name             = "allow-local-dev"
   server_id        = azurerm_postgresql_flexible_server.db.id
-  start_ip_address = var.developer_ip
-  end_ip_address   = var.developer_ip
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "255.255.255.255"
 
 }
