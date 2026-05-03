@@ -87,6 +87,8 @@ resource "azurerm_linux_web_app" "backend" {
     "REDIS_HOST"     = azurerm_redis_cache.cache.hostname
     "REDIS_PORT"     = azurerm_redis_cache.cache.ssl_port
     "REDIS_PASSWORD" = azurerm_redis_cache.cache.primary_access_key
+    "AZURE_STORAGE_CONNECTION_STRING" = azurerm_storage_account.storage.primary_connection_string
+
   }
 
   identity {

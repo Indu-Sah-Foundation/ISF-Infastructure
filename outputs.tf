@@ -83,3 +83,12 @@ output "keyvault_uri" {
   value       = azurerm_key_vault.kv.vault_uri
   description = "Key Vault URI"
 }
+
+output "storage_connection_string" {
+  value       = azurerm_storage_account.storage.primary_connection_string
+  sensitive   = true
+}
+
+output "images_url" {
+  value       = "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/images"
+}
