@@ -92,3 +92,8 @@ output "storage_connection_string" {
 output "images_url" {
   value       = "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/images"
 }
+
+output "appinsights_connection_string" {
+  value       = azurerm_application_insights.appinsights.connection_string
+  sensitive   = true
+}
