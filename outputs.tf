@@ -46,3 +46,19 @@ output "postgres_server_fqdn" {
 output "postgres_database_name" {
   value = azurerm_postgresql_flexible_server_database.app_db.name
 }
+
+output "translator_endpoint" {
+  value = azurerm_cognitive_account.translator.endpoint
+  description = "Translator API endpoint"
+}
+
+output "translator_key" {
+  value = azurerm_cognitive_account.translator.primary_access_key
+  description = "Translator API key"
+  sensitive = true
+}
+
+output "translator_region" {
+  value = azurerm_cognitive_account.translator.location
+  description = "Translator region"
+}

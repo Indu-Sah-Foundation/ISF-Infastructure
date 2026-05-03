@@ -81,8 +81,9 @@ resource "azurerm_linux_web_app" "backend" {
     "PORT"                            = "8080"
     "GIN_MODE"                        = "release"
     "DATABASE_URL"                    = "postgres://${var.db_admin_username}:${var.db_admin_password}@${azurerm_postgresql_flexible_server.db.fqdn}:5432/${azurerm_postgresql_flexible_server_database.app_db.name}?sslmode=require"
-
-    # MONGODB_URI will be set by GitHub Actions (secrets shouldn't be in IaC)
+    "TRANSLATOR_ENDPOINT" = azurerm_cognitive_account.translator.endpoint
+    "TRANSLATOR_KEY"      = azurerm_cognitive_account.translator.primary_access_key
+    "TRANSLATOR_REGION"   = azurerm_cognitive_account.translator.location
   }
 
   identity {
