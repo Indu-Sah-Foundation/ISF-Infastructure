@@ -5,7 +5,7 @@ resource "azurerm_cognitive_account" "translator" {
     kind = "TextTranslation"
     sku_name = "F0"
 
-    tag = {
+    tags = {
         Environment = "Production"
         ManagedBy = "Terraform"
     }
