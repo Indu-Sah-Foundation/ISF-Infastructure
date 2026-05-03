@@ -4,6 +4,12 @@ variable "location" {
   type        = string
 }
 
+variable "postgres_location" {
+  description = "Azure region"
+  default     = "West US"
+  type        = string
+}
+
 variable "app_name" {
   description = "Base name for apps"
   default     = "isfapp"
