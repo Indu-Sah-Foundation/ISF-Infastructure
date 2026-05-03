@@ -1,5 +1,5 @@
 resource "azurerm_postgresql_flexible_server" "db" {
-  name                   = "${var.app_name}-postgres-west"
+  name                   = "${var.app_name}-postgres"
   resource_group_name    = azurerm_resource_group.rg.name
   location               = "${var.postgres_location}"
   version                = "16"
