@@ -62,3 +62,19 @@ output "translator_region" {
   value = azurerm_cognitive_account.translator.location
   description = "Translator region"
 }
+
+output "redis_hostname" {
+  value       = azurerm_redis_cache.cache.hostname
+  description = "Redis hostname"
+}
+
+output "redis_port" {
+  value       = azurerm_redis_cache.cache.ssl_port
+  description = "Redis SSL port"
+}
+
+output "redis_primary_key" {
+  value       = azurerm_redis_cache.cache.primary_access_key
+  description = "Redis primary access key"
+  sensitive   = true
+}

@@ -84,6 +84,9 @@ resource "azurerm_linux_web_app" "backend" {
     "TRANSLATOR_ENDPOINT" = azurerm_cognitive_account.translator.endpoint
     "TRANSLATOR_KEY"      = azurerm_cognitive_account.translator.primary_access_key
     "TRANSLATOR_REGION"   = azurerm_cognitive_account.translator.location
+    "REDIS_HOST"     = azurerm_redis_cache.cache.hostname
+    "REDIS_PORT"     = azurerm_redis_cache.cache.ssl_port
+    "REDIS_PASSWORD" = azurerm_redis_cache.cache.primary_access_key
   }
 
   identity {
