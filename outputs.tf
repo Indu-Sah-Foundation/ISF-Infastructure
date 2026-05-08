@@ -29,15 +29,6 @@ output "app_service_name" {
   description = "For publish profile"
 }
 
-output "frontdoor_endpoint_url" {
-  value       = "https://${azurerm_cdn_frontdoor_endpoint.main.host_name}"
-  description = "Public Front Door URL – use this as your app's entry point"
-}
-
-output "frontdoor_endpoint_hostname" {
-  value       = azurerm_cdn_frontdoor_endpoint.main.host_name
-  description = "Raw Front Door hostname (for DNS CNAME if adding a custom domain)"
-}
 
 output "postgres_server_fqdn" {
   value = azurerm_postgresql_flexible_server.db.fqdn

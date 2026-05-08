@@ -64,7 +64,6 @@ resource "azurerm_linux_web_app" "backend" {
       # Allow both the Front Door endpoint and the raw Static Web App hostname.
       # Once you add a custom domain to Front Door, add it here too.
       allowed_origins = [
-        "https://${azurerm_cdn_frontdoor_endpoint.main.host_name}",
         "https://${azurerm_static_web_app.frontend.default_host_name}",
       ]
       support_credentials = false
@@ -121,3 +120,5 @@ resource "azurerm_static_web_app" "frontend" {
   sku_tier            = "Free"
   sku_size            = "Free"
 }
+
+
