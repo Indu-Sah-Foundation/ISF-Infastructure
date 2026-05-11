@@ -67,7 +67,6 @@ data "azurerm_key_vault_secret" "jwt_secret" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -77,7 +76,6 @@ data "azurerm_key_vault_secret" "stripe_secret_key" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -87,7 +85,6 @@ data "azurerm_key_vault_secret" "stripe_webhook_secret" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -97,7 +94,6 @@ data "azurerm_key_vault_secret" "admin_password" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -107,7 +103,6 @@ data "azurerm_key_vault_secret" "database_url" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -117,7 +112,6 @@ data "azurerm_key_vault_secret" "redis_url" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -127,7 +121,6 @@ data "azurerm_key_vault_secret" "translator_key" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
 
@@ -137,6 +130,5 @@ data "azurerm_key_vault_secret" "db_admin_password" {
   depends_on = [
     azurerm_key_vault_access_policy.developer,
     azurerm_key_vault_access_policy.github_actions,
-    azurerm_key_vault_access_policy.app_service,
   ]
 }
