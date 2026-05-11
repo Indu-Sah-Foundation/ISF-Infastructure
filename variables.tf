@@ -15,7 +15,7 @@ variable "app_name" {
   default     = "isfapp"
   type        = string
 }
-
+ 
 variable "db_admin_username" {
   description = "PostgreSQL administrator username"
   type        = string
