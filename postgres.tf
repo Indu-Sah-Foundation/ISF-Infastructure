@@ -4,10 +4,14 @@ resource "azurerm_postgresql_flexible_server" "db" {
   location               = var.postgres_location
   version                = "16"
   administrator_login    = var.db_admin_username
-  administrator_password = var.db_admin_password
+  administrator_password = data.azurerm_key_vault_secret.db_admin_password.value
   sku_name               = "B_Standard_B1ms"
   storage_mb             = 32768
   backup_retention_days  = 7
+
+  lifecycle {
+    ignore_changes = [administrator_password]
+  }
 }
 
 resource "azurerm_postgresql_flexible_server_database" "app_db" {

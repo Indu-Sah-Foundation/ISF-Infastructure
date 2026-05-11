@@ -5,4 +5,5 @@
 terraform.tfstate
 terraform.tfstate.backup
 *.tfvars
+!terraform.tfvars  
 env.tfvars

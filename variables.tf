@@ -22,51 +22,19 @@ variable "db_admin_username" {
   default     = "pgadmin"
 }
 
-variable "db_admin_password" {
-  description = "PostgreSQL administrator password"
-  type        = string
-  sensitive   = true
-}
+# Note: secrets (db_admin_password, jwt_secret, stripe_*, admin_password,
+# translator_key) are NOT declared here. They live in Key Vault and are read
+# at plan time via `data "azurerm_key_vault_secret"` blocks in keyvault.tf.
 
 variable "developer_ip" {
   description = "Your public IP for DataGrip access – find it at https://ifconfig.me"
   type        = string
 }
 
-variable "translator_key" {
-  description = "Azure Translator API key"
-  type        = string
-  sensitive   = true
-}
-
-variable "jwt_secret" {
-  description = "HMAC secret used to sign JWTs. Generate via: openssl rand -base64 64 | tr -d '\\n'"
-  type        = string
-  sensitive   = true
-}
-
-variable "stripe_secret_key" {
-  description = "Stripe API secret key (sk_test_... or sk_live_...)"
-  type        = string
-  sensitive   = true
-}
-
-variable "stripe_webhook_secret" {
-  description = "Stripe webhook signing secret (whsec_...) for /donations/webhook"
-  type        = string
-  sensitive   = true
-}
-
 variable "admin_email" {
   description = "Initial admin user email -- bootstrapped on backend startup"
   type        = string
   default     = "admin@isf.org"
-}
-
-variable "admin_password" {
-  description = "Initial admin user password -- ROTATE after first login"
-  type        = string
-  sensitive   = true
 }
 
 variable "donation_success_url" {

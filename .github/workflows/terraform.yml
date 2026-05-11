@@ -5,68 +5,71 @@ on:
     branches: [main]
     paths:
       - "**/*.tf"
-      - "**/*.tfvars"
+      - "terraform.tfvars"
+      - ".github/workflows/terraform.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**/*.tf"
+      - "terraform.tfvars"
   workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write
-
+  id-token: write   
 jobs:
   setup-backend:
+    name: Bootstrap state backend
     runs-on: ubuntu-latest
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID:        ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID:        ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_USE_OIDC:         "true"
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
 
-      - name: Azure Login via OIDC
-        uses: azure/login@v2
+      - uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id:        ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id:        ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Setup State Backend
+      - name: Apply state-backend bootstrap
         working-directory: backend-setup
         run: |
           terraform init
           terraform apply -auto-approve
 
   deploy-infrastructure:
+    name: Apply main infra
     needs: setup-backend
     runs-on: ubuntu-latest
     env:
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      TF_VAR_db_admin_password: ${{ secrets.TF_VAR_DB_ADMIN_PASSWORD }}
-      TF_VAR_developer_ip: ${{ secrets.TF_VAR_DEVELOPER_IP }}
-      ARM_USE_OIDC: "true"
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      ARM_CLIENT_ID:        ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID:        ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_USE_OIDC:         "true"
+      TF_VAR_developer_ip:                 ${{ secrets.DEVELOPER_IP }}
+      TF_VAR_developer_object_id:          ${{ secrets.DEVELOPER_OBJECT_ID }}
+      TF_VAR_github_actions_sp_object_id:  ${{ secrets.GH_ACTIONS_SP_OBJECT_ID }}
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
 
-      - name: Azure Login via OIDC
-        uses: azure/login@v2
+      - uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id:        ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id:        ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Terraform Init
         run: terraform init
@@ -74,9 +77,13 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
+      # PRs: plan only, post output as a check
       - name: Terraform Plan
-        run: terraform plan -var-file="env.tfvars" -out=tfplan
+        id: plan
+        run: terraform plan -input=false -no-color -out=tfplan
+        continue-on-error: false
 
+      # main pushes only: apply the plan
       - name: Terraform Apply
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve -input=false tfplan
