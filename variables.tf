@@ -9,7 +9,7 @@ variable "postgres_location" {
   default     = "West US"
   type        = string
 }
-
+ 
 variable "app_name" {
   description = "Base name for apps"
   default     = "isfapp"
