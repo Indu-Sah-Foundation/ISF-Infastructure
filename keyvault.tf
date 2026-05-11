@@ -1,38 +1,41 @@
-data "azurerm_client_config" "current" {}
+data "azurerm_key_vault_secret" "jwt_secret" {
+  name         = "jwt-secret"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
-resource "azurerm_key_vault" "kv" {
-  name                = "${var.app_name}-kv"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-  sku_name            = "standard"
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_linux_web_app.backend.identity[0].principal_id
+data "azurerm_key_vault_secret" "stripe_secret_key" {
+  name         = "stripe-secret-key"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
+data "azurerm_key_vault_secret" "stripe_webhook_secret" {
+  name         = "stripe-webhook-secret"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
+data "azurerm_key_vault_secret" "admin_password" {
+  name         = "admin-password"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
-    secret_permissions = [
-      "Get",
-      "List",
-      "Set",
-      "Delete",
-      "Purge",
-      "Recover",
-    ]
-  }
+data "azurerm_key_vault_secret" "database_url" {
+  name         = "database-url"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
-  tags = {
-    Environment = "Production"
-    ManagedBy   = "Terraform"
-  }
+data "azurerm_key_vault_secret" "redis_url" {
+  name         = "redis-url"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
+}
 
+data "azurerm_key_vault_secret" "translator_key" {
+  name         = "translator-key"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_key_vault_access_policy.developer]
 }

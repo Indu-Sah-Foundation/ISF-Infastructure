@@ -18,7 +18,7 @@ resource "azurerm_application_insights" "appinsights" {
   location            = azurerm_resource_group.rg.location
   workspace_id        = azurerm_log_analytics_workspace.logs.id
   application_type    = "web"
-  
+
   tags = {
     Environment = "Production"
     ManagedBy   = "Terraform"

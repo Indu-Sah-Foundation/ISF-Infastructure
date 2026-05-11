@@ -44,18 +44,18 @@ output "postgres_admin_username" {
 }
 
 output "translator_endpoint" {
-  value = azurerm_cognitive_account.translator.endpoint
+  value       = azurerm_cognitive_account.translator.endpoint
   description = "Translator API endpoint"
 }
 
 output "translator_key" {
-  value = azurerm_cognitive_account.translator.primary_access_key
+  value       = azurerm_cognitive_account.translator.primary_access_key
   description = "Translator API key"
-  sensitive = true
+  sensitive   = true
 }
 
 output "translator_region" {
-  value = azurerm_cognitive_account.translator.location
+  value       = azurerm_cognitive_account.translator.location
   description = "Translator region"
 }
 
@@ -86,8 +86,8 @@ output "keyvault_name" {
 }
 
 output "storage_connection_string" {
-  value       = azurerm_storage_account.storage.primary_connection_string
-  sensitive   = true
+  value     = azurerm_storage_account.storage.primary_connection_string
+  sensitive = true
 }
 
 output "storage_account_name" {
@@ -96,10 +96,10 @@ output "storage_account_name" {
 }
 
 output "images_url" {
-  value       = "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/images"
+  value = "https://${azurerm_storage_account.storage.name}.blob.core.windows.net/images"
 }
 
 output "appinsights_connection_string" {
-  value       = azurerm_application_insights.appinsights.connection_string
-  sensitive   = true
+  value     = azurerm_application_insights.appinsights.connection_string
+  sensitive = true
 }

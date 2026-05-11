@@ -52,7 +52,7 @@ resource "azurerm_linux_web_app" "backend" {
 
   site_config {
     always_on = true
-    
+
     application_stack {
       docker_registry_url      = "https://${azurerm_container_registry.acr.login_server}"
       docker_registry_username = azurerm_container_registry.acr.admin_username
@@ -73,22 +73,30 @@ resource "azurerm_linux_web_app" "backend" {
   }
 
   app_settings = {
-    "WEBSITES_PORT"                   = "8080"
+    "WEBSITES_PORT" = "8080"
+    "PORT"          = "8080"
+    "GIN_MODE"      = "release"
+
     "DOCKER_REGISTRY_SERVER_URL"      = "https://${azurerm_container_registry.acr.login_server}"
     "DOCKER_REGISTRY_SERVER_USERNAME" = azurerm_container_registry.acr.admin_username
     "DOCKER_REGISTRY_SERVER_PASSWORD" = azurerm_container_registry.acr.admin_password
-    "PORT"                            = "8080"
-    "GIN_MODE"                        = "release"
-    "DATABASE_URL"                    = "postgres://${var.db_admin_username}:${var.db_admin_password}@${azurerm_postgresql_flexible_server.db.fqdn}:5432/${azurerm_postgresql_flexible_server_database.app_db.name}?sslmode=require"
-    "TRANSLATOR_ENDPOINT" = azurerm_cognitive_account.translator.endpoint
-    "TRANSLATOR_KEY"      = azurerm_cognitive_account.translator.primary_access_key
-    "TRANSLATOR_REGION"   = azurerm_cognitive_account.translator.location
-    "REDIS_HOST"     = azurerm_redis_cache.cache.hostname
-    "REDIS_PORT"     = azurerm_redis_cache.cache.ssl_port
-    "REDIS_PASSWORD" = azurerm_redis_cache.cache.primary_access_key
-    "AZURE_STORAGE_CONNECTION_STRING" = azurerm_storage_account.storage.primary_connection_string
+
+    "TRANSLATOR_ENDPOINT"  = azurerm_cognitive_account.translator.endpoint
+    "TRANSLATOR_REGION"    = azurerm_cognitive_account.translator.location
+    "ADMIN_EMAIL"          = var.admin_email
+    "DONATION_SUCCESS_URL" = var.donation_success_url
+    "DONATION_CANCEL_URL"  = var.donation_cancel_url
+
+    "AZURE_STORAGE_CONNECTION_STRING"       = azurerm_storage_account.storage.primary_connection_string
     "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appinsights.connection_string
 
+    "JWT_SECRET"            = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.jwt_secret.id})"
+    "STRIPE_SECRET_KEY"     = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.stripe_secret_key.id})"
+    "STRIPE_WEBHOOK_SECRET" = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.stripe_webhook_secret.id})"
+    "ADMIN_PASSWORD"        = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.admin_password.id})"
+    "DATABASE_URL"          = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.database_url.id})"
+    "REDIS_URL"             = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.redis_url.id})"
+    "TRANSLATOR_KEY"        = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.translator_key.id})"
   }
 
   identity {
