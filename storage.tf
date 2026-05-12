@@ -6,6 +6,22 @@ resource "azurerm_storage_account" "storage" {
   account_replication_type = "LRS"
   allow_nested_items_to_be_public = true
 
+  # Browser uploads to Blob via SAS need CORS. Allow the deployed frontend +
+  # local dev origins. Add custom domain here when you set one up.
+  blob_properties {
+    cors_rule {
+      allowed_origins = [
+        "https://proud-plant-069ab5b0f.3.azurestaticapps.net",
+        "http://localhost:5173",
+        "http://localhost:3000",
+      ]
+      allowed_methods    = ["GET", "PUT", "OPTIONS", "HEAD"]
+      allowed_headers    = ["*"]
+      exposed_headers    = ["*"]
+      max_age_in_seconds = 3600
+    }
+  }
+
   tags = {
     Environment = "Production"
     ManagedBy   = "Terraform"
