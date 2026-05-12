@@ -12,8 +12,10 @@ resource "azurerm_storage_account" "storage" {
     cors_rule {
       allowed_origins = [
         "https://proud-plant-069ab5b0f.3.azurestaticapps.net",
-        "http://localhost:8080",
+        "http://localhost:5173",
         "http://localhost:3000",
+        "http://localhost:8080",
+
       ]
       allowed_methods    = ["GET", "PUT", "OPTIONS", "HEAD"]
       allowed_headers    = ["*"]
