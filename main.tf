@@ -61,10 +61,10 @@ resource "azurerm_linux_web_app" "backend" {
     }
 
     cors {
-      # Allow both the Front Door endpoint and the raw Static Web App hostname.
-      # Once you add a custom domain to Front Door, add it here too.
       allowed_origins = [
         "https://${azurerm_static_web_app.frontend.default_host_name}",
+        "http://localhost:8080",  # Vite dev
+        "http://localhost:3000",  # CRA / Next dev
       ]
       support_credentials = false
     }

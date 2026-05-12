@@ -7,6 +7,6 @@ gin_mode             = "release"
 translator_endpoint  = "https://api.cognitive.microsofttranslator.com/"
 translator_region    = "eastus2"
 admin_email          = "admin@isf.org"
-donation_success_url = "http://localhost:3000/donate/thanks"
-donation_cancel_url  = "http://localhost:3000/donate"
+donation_success_url = "http://localhost:8080/donate/thanks"
+donation_cancel_url  = "http://localhost:8080/donate"
  
