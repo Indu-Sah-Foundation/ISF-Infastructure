@@ -63,6 +63,7 @@ resource "azurerm_linux_web_app" "backend" {
     cors {
       allowed_origins = [
         "https://${azurerm_static_web_app.frontend.default_host_name}",
+        "https://www.indusahfoundation.org"
         "http://localhost:5173", # Vite dev
         "http://localhost:3000", # CRA / Next dev
         "http://localhost:8080", # CRA / Next dev
