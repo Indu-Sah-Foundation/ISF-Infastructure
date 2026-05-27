@@ -132,3 +132,12 @@ data "azurerm_key_vault_secret" "db_admin_password" {
     azurerm_key_vault_access_policy.github_actions,
   ]
 }
+
+data "azurerm_key_vault_secret" "api_key" {
+  name         = "api-key"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [
+    azurerm_key_vault_access_policy.developer,
+    azurerm_key_vault_access_policy.github_actions,
+  ]
+}
