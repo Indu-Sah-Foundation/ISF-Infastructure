@@ -37,7 +37,6 @@ variable "admin_email" {
   default     = "admin@isf.org"
 }
 
-
 variable "donation_success_url" {
   description = "Where Stripe redirects after a successful donation"
   type        = string
