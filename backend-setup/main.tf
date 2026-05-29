@@ -11,6 +11,7 @@ provider "azurerm" {
   features {}
 }
 
+
 resource "azurerm_resource_group" "state" {
   name     = "terraform-state-rg"
   location = "eastus2"
