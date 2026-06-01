@@ -141,3 +141,12 @@ data "azurerm_key_vault_secret" "api_key" {
     azurerm_key_vault_access_policy.github_actions,
   ]
 }
+
+data "azurerm_key_vault_secret" "github_token" {
+  name         = "github-token"
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on = [
+    azurerm_key_vault_access_policy.developer,
+    azurerm_key_vault_access_policy.github_actions,
+  ]
+}
