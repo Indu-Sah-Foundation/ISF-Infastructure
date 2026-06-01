@@ -100,6 +100,7 @@ resource "azurerm_linux_web_app" "backend" {
     "REDIS_URL"             = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.redis_url.id})"
     "TRANSLATOR_KEY"        = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.translator_key.id})"
     "API_KEY"               = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.api_key.id})"
+    "GITHUB_TOKEN"          = "@Microsoft.KeyVault(SecretUri=${data.azurerm_key_vault_secret.github_token.id})"
   }
 
   identity {
